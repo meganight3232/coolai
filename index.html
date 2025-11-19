@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Hub</title>
+  <style>
+    body {
+      margin: 0;
+      background: #0d0d0d;
+      color: #f2f2f2;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    #loginBox, #app {
+      background: #1a1a1a;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+      width: 320px;
+      text-align: center;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      background: #111;
+      border: 1px solid #333;
+      color: #fff;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px;
+      width: 100%;
+      border: none;
+      background: #4a4aff;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    button:hover {
+      background: #6363ff;
+    }
+    #app {
+      display: none;
+      width: 500px;
+    }
+    #responseBox {
+      margin-top: 15px;
+      white-space: pre-wrap;
+      background: #111;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      height: 200px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+
+<div id="loginBox">
+  <h2>Enter Password</h2>
+  <input type="password" id="pw" placeholder="Password" />
+  <button onclick="checkPW()">Enter</button>
+</div>
+
+<div id="app">
+  <h2>AI Hub</h2>
+
+  <select id="aiSelect">
+    <option value="">Select an AI Provider</option>
+    <option value="openai">OpenAI</option>
+    <option value="anthropic">Anthropic</option>
+    <option value="google">Google Gemini</option>
+  </select>
+
+  <input id="apiKey" placeholder="Enter your API key" />
+
+  <textarea id="prompt" rows="5" placeholder="Ask something..."></textarea>
+
+  <button onclick="sendAI()">Send</button>
+
+  <div id="responseBox"></div>
+</div>
+
+<script>
+  const PASSWORD = "7301";
+
+  function checkPW() {
+    const input = document.getElementById("pw").value;
+    if (input === PASSWORD) {
+      document.getElementById("loginBox").style.display = "none";
+      document.getElementById("app").style.display = "block";
+    } else {
+      alert("Wrong password");
+    }
+  }
+
+  async function sendAI() {
+    const provider = document.getElementById("aiSelect").value;
+    const key = document.getElementById("apiKey").value;
+    const prompt = document.getElementById("prompt").value;
+    const box = document.getElementById("responseBox");
+
+    if (!provider || !key || !prompt) {
+      box.textContent = "Please fill out all fields.";
+      return;
+    }
+
+    box.textContent = "Loading...";
+
+    try {
+      let url = "";
+      let body = {};
+      let headers = {
+        "Content-Type": "application/json",
+      };
+
+      if (provider === "openai") {
+        url = "https://api.openai.com/v1/chat/completions";
+        headers["Authorization"] = `Bearer ${key}`;
+        body = {
+          model: "gpt-4o-mini",
+          messages: [{ role: "user", content: prompt }]
+        };
+      }
+
+      if (provider === "anthropic") {
+        url = "https://api.anthropic.com/v1/messages";
+        headers["x-api-key"] = key;
+        body = {
+          model: "claude-3-5-sonnet-20240620",
+          max_tokens: 200,
+          messages: [{ role: "user", content: prompt }]
+        };
+      }
+
+      if (provider === "google") {
+        url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${key}`;
+        body = {
+          contents: [{ parts: [{ text: prompt }] }]
+        };
+      }
+
+      const res = await fetch(url, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body)
+      });
+
+      const data = await res.json();
+
+      let text = "";
+
+      if (provider === "openai" && data.choices) {
+        text = data.choices[0].message.content;
+      } else if (provider === "anthropic" && data.content) {
+        text = data.content[0].text;
+      } else if (provider === "google" && data.candidates) {
+        text = data.candidates[0].content.parts[0].text;
+      } else {
+        text = JSON.stringify(data, null, 2);
+      }
+
+      box.textContent = text;
+    } catch (err) {
+      document.getElementById("responseBox").textContent = "Error: " + err;
+    }
+  }
+</script>
+
+</body>
+</html>
