@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Hub Settings</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  body{display:flex; margin:0; font-family:'Roboto',sans-serif; color:#eee; background:#0a0a0a; transition:0.3s;}
+  
+  /* Sidebar */
+  .sidebar{width:240px; background:#111; height:100vh; position: fixed; left:0; top:0; padding:20px; box-shadow:2px 0 20px rgba(0,0,0,0.7);}
+  .sidebar ul{list-style:none; padding:0; margin:0;}
+  .sidebar h2{color:#4a4aff; text-align:center; margin-bottom:30px;}
+  .sidebar ul li{padding:12px 10px; margin-bottom:10px; cursor:pointer; border-radius:6px; transition:0.3s;}
+  .sidebar ul li:hover{background:#222; color:#4a4aff;}
+  
+  /* Main content */
+  .main-content{margin-left:240px; padding:30px; width: calc(100% - 240px); transition:0.3s;}
+  h3{color:#4a4aff;}
+  label{margin-top:20px; display:block;}
+  input, select, button {width:100%; padding:12px; margin-top:10px; border-radius:8px; border:none; background:#111; color:#fff; font-size:16px;}
+  input:focus, select:focus{outline:none; box-shadow:0 0 10px #4a4aff; background:#1a1a1a;}
+  button{background:#4a4aff; cursor:pointer; transition:0.3s;}
+  button:hover{transform:scale(1.03); box-shadow:0 8px 20px rgba(0,0,0,0.4);}
+  #statusMsg{margin-top:10px; font-size:14px;}
+  .danger-btn{background:#ff4a4a;}
+  .danger-btn:hover{background:#ff6a6a;}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <h2>AI Hub</h2>
+  <ul>
+    <li onclick="navigate('dashboard')">Home</li>
+    <li onclick="navigate('images')">Images / Files</li>
+    <li onclick="navigate('credits')">API Credits</li>
+    <li onclick="navigate('settings')">Settings</li>
+  </ul>
+</div>
+
+<div class="main-content">
+  <h3>Settings</h3>
+
+  <!-- Theme -->
+  <label for="themeSelect">Theme:</label>
+  <select id="themeSelect" onchange="changeTheme()">
+    <option value="dark">Dark</option>
+    <option value="light">Light</option>
+  </select>
+
+  <!-- API Key Inputs -->
+  <label for="openaiKey">OpenAI API Key:</label>
+  <input type="text" id="openaiKey" placeholder="Enter your OpenAI key">
+
+  <label for="anthropicKey">Anthropic API Key:</label>
+  <input type="text" id="anthropicKey" placeholder="Enter your Anthropic key">
+
+  <label for="googleKey">Google Gemini Key:</label>
+  <input type="text" id="googleKey" placeholder="Enter your Google key">
+
+  <button onclick="saveKeys()">Save API Keys</button>
+  <button class="danger-btn" onclick="clearKeys()">Clear API Keys</button>
+
+  <!-- Chat History Management -->
+  <h3 style="margin-top:30px;">Chat History</h3>
+  <p>You can clear all saved chat history:</p>
+  <button class="danger-btn" onclick="clearChat()">Clear Chat History</button>
+
+  <p id="statusMsg"></p>
+</div>
+
+<script>
+// Navigation
+function navigate(page){window.location.href = page+'.html';}
+
+// Load keys and theme from localStorage
+window.onload = function(){
+  const keys = JSON.parse(localStorage.getItem('userAPIKeys')||'{}');
+  if(keys.openai) document.getElementById('openaiKey').value = keys.openai;
+  if(keys.anthropic) document.getElementById('anthropicKey').value = keys.anthropic;
+  if(keys.google) document.getElementById('googleKey').value = keys.google;
+
+  const theme = localStorage.getItem('theme')||'dark';
+  document.getElementById('themeSelect').value = theme;
+  changeTheme();
+}
+
+// Save API Keys locally
+function saveKeys(){
+  const keys = {
+    openai: document.getElementById('openaiKey').value,
+    anthropic: document.getElementById('anthropicKey').value,
+    google: document.getElementById('googleKey').value
+  };
+  localStorage.setItem('userAPIKeys', JSON.stringify(keys));
+  localStorage.setItem('theme', document.getElementById('themeSelect').value);
+  document.getElementById('statusMsg').textContent = "API Keys saved locally!";
+}
+
+// Clear keys
+function clearKeys(){
+  localStorage.removeItem('userAPIKeys');
+  document.getElementById('openaiKey').value='';
+  document.getElementById('anthropicKey').value='';
+  document.getElementById('googleKey').value='';
+  document.getElementById('statusMsg').textContent="API Keys cleared!";
+}
+
+// Clear chat history
+function clearChat(){
+  localStorage.removeItem('chatHistory');
+  document.getElementById('statusMsg').textContent="Chat history cleared!";
+}
+
+// Theme change
+function changeTheme(){
+  const theme = document.getElementById('themeSelect').value;
+  if(theme==='dark'){
+    document.body.style.background = '#0a0a0a';
+    document.body.style.color = '#eee';
+  } else {
+    document.body.style.background = '#f2f2f2';
+    document.body.style.color = '#111';
+  }
+  localStorage.setItem('theme', theme);
+}
+</script>
+</body>
+</html>
