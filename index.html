@@ -1,179 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Hub</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Hub Login</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
+    /* Full-page gradient background with subtle animation */
     body {
       margin: 0;
-      background: #0d0d0d;
-      color: #f2f2f2;
-      font-family: Arial, sans-serif;
+      font-family: 'Roboto', sans-serif;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      background: linear-gradient(120deg, #0f0c29, #302b63, #24243e);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
     }
-    #loginBox, #app {
+    @keyframes gradientBG {
+      0% {background-position:0% 50%;}
+      50% {background-position:100% 50%;}
+      100% {background-position:0% 50%;}
+    }
+
+    .login-screen {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    .login-box {
+      background: rgba(20,20,20,0.95);
+      padding: 40px 50px;
+      border-radius: 15px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      width: 360px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-box::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: rgba(255,255,255,0.05);
+      transform: rotate(45deg);
+      pointer-events: none;
+      animation: shine 2.5s linear infinite;
+    }
+
+    @keyframes shine {
+      0% {transform: rotate(45deg) translateX(-200%);}
+      100% {transform: rotate(45deg) translateX(200%);}
+    }
+
+    .logo {
+      width: 80px;
+      margin-bottom: 20px;
+      transition: transform 0.5s ease;
+    }
+
+    .logo:hover {
+      transform: rotate(360deg);
+    }
+
+    h2 {
+      color: #fff;
+      margin-bottom: 30px;
+      font-weight: 700;
+      font-size: 24px;
+      letter-spacing: 1px;
+      text-shadow: 0 0 10px #4a4aff;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      background: #111;
+      color: #fff;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    input:focus {
+      box-shadow: 0 0 10px #4a4aff;
       background: #1a1a1a;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.6);
-      width: 320px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(90deg,#4a4aff,#6363ff);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+    }
+
+    button:hover {
+      background: linear-gradient(90deg,#6363ff,#4a4aff);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      transform: scale(1.02);
+    }
+
+    #error-msg {
+      color: #ff4a4a;
+      font-weight: 500;
+      margin-top: 10px;
+      min-height: 20px;
+      transition: 0.3s;
+    }
+
+    /* Animations */
+    .animate-fade-in {
+      animation: fadeIn 1.5s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeIn {
+      0% {opacity: 0; transform: translateY(-20px);}
+      100% {opacity: 1; transform: translateY(0);}
+    }
+
+    .animate-shake {
+      animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+      0% {transform: translateX(0);}
+      25% {transform: translateX(-5px);}
+      50% {transform: translateX(5px);}
+      75% {transform: translateX(-5px);}
+      100% {transform: translateX(0);}
+    }
+
+    /* Footer */
+    .login-footer {
+      margin-top: 30px;
+      font-size: 12px;
+      color: #888;
       text-align: center;
     }
-    input, select, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 8px;
-      background: #111;
-      border: 1px solid #333;
-      color: #fff;
+
+    .login-footer a {
+      color: #4a4aff;
+      text-decoration: none;
+      transition: 0.3s;
     }
-    button {
-      margin-top: 15px;
-      padding: 10px;
-      width: 100%;
-      border: none;
-      background: #4a4aff;
-      border-radius: 8px;
-      color: white;
-      cursor: pointer;
-      font-size: 15px;
+
+    .login-footer a:hover {
+      text-decoration: underline;
     }
-    button:hover {
-      background: #6363ff;
-    }
-    #app {
-      display: none;
-      width: 500px;
-    }
-    #responseBox {
-      margin-top: 15px;
-      white-space: pre-wrap;
-      background: #111;
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid #333;
-      height: 200px;
-      overflow-y: auto;
-    }
+
   </style>
 </head>
 <body>
+  <div class="login-screen">
+    <div class="login-box animate-fade-in">
+      <img src="assets/logo.png" class="logo" />
+      <h2>Welcome to AI Hub</h2>
+      <input type="password" id="pw" placeholder="Enter Password">
+      <button onclick="checkPW()">Enter</button>
+      <p id="error-msg"></p>
+      <div class="login-footer">
+        &copy; 2025 AI Hub | <a href="#">Privacy Policy</a>
+      </div>
+    </div>
+  </div>
 
-<div id="loginBox">
-  <h2>Enter Password</h2>
-  <input type="password" id="pw" placeholder="Password" />
-  <button onclick="checkPW()">Enter</button>
-</div>
+  <script>
+    const PASSWORD = "7301";
 
-<div id="app">
-  <h2>AI Hub</h2>
-
-  <select id="aiSelect">
-    <option value="">Select an AI Provider</option>
-    <option value="openai">OpenAI</option>
-    <option value="anthropic">Anthropic</option>
-    <option value="google">Google Gemini</option>
-  </select>
-
-  <input id="apiKey" placeholder="Enter your API key" />
-
-  <textarea id="prompt" rows="5" placeholder="Ask something..."></textarea>
-
-  <button onclick="sendAI()">Send</button>
-
-  <div id="responseBox"></div>
-</div>
-
-<script>
-  const PASSWORD = "7301";
-
-  function checkPW() {
-    const input = document.getElementById("pw").value;
-    if (input === PASSWORD) {
-      document.getElementById("loginBox").style.display = "none";
-      document.getElementById("app").style.display = "block";
-    } else {
-      alert("Wrong password");
-    }
-  }
-
-  async function sendAI() {
-    const provider = document.getElementById("aiSelect").value;
-    const key = document.getElementById("apiKey").value;
-    const prompt = document.getElementById("prompt").value;
-    const box = document.getElementById("responseBox");
-
-    if (!provider || !key || !prompt) {
-      box.textContent = "Please fill out all fields.";
-      return;
-    }
-
-    box.textContent = "Loading...";
-
-    try {
-      let url = "";
-      let body = {};
-      let headers = {
-        "Content-Type": "application/json",
-      };
-
-      if (provider === "openai") {
-        url = "https://api.openai.com/v1/chat/completions";
-        headers["Authorization"] = `Bearer ${key}`;
-        body = {
-          model: "gpt-4o-mini",
-          messages: [{ role: "user", content: prompt }]
-        };
-      }
-
-      if (provider === "anthropic") {
-        url = "https://api.anthropic.com/v1/messages";
-        headers["x-api-key"] = key;
-        body = {
-          model: "claude-3-5-sonnet-20240620",
-          max_tokens: 200,
-          messages: [{ role: "user", content: prompt }]
-        };
-      }
-
-      if (provider === "google") {
-        url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${key}`;
-        body = {
-          contents: [{ parts: [{ text: prompt }] }]
-        };
-      }
-
-      const res = await fetch(url, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(body)
-      });
-
-      const data = await res.json();
-
-      let text = "";
-
-      if (provider === "openai" && data.choices) {
-        text = data.choices[0].message.content;
-      } else if (provider === "anthropic" && data.content) {
-        text = data.content[0].text;
-      } else if (provider === "google" && data.candidates) {
-        text = data.candidates[0].content.parts[0].text;
+    function checkPW() {
+      const input = document.getElementById('pw').value;
+      const msg = document.getElementById('error-msg');
+      if(input === PASSWORD){
+        // Add loading animation before redirect
+        msg.style.color = "#4aff88";
+        msg.textContent = "Access Granted! Redirecting...";
+        setTimeout(() => window.location.href = "dashboard.html", 1000);
       } else {
-        text = JSON.stringify(data, null, 2);
+        msg.textContent = "Wrong password!";
+        msg.style.color = "#ff4a4a";
+        msg.classList.add('animate-shake');
+        setTimeout(()=> msg.classList.remove('animate-shake'),500);
       }
-
-      box.textContent = text;
-    } catch (err) {
-      document.getElementById("responseBox").textContent = "Error: " + err;
     }
-  }
-</script>
-
+  </script>
 </body>
 </html>
+
