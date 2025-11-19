@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Hub - Images / Files</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  body{margin:0; font-family:'Roboto',sans-serif; display:flex; background:#0a0a0a; color:#eee;}
+  
+  /* Sidebar */
+  .sidebar{
+    width:240px;
+    background:#111;
+    height:100vh;
+    position:fixed;
+    left:0;
+    top:0;
+    padding:20px;
+    box-shadow:2px 0 20px rgba(0,0,0,0.7);
+    display:flex;
+    flex-direction:column;
+    transition: width 0.3s;
+  }
+  .sidebar.collapsed{width:60px;}
+  .sidebar h2{color:#4a4aff; text-align:center; margin-bottom:30px;}
+  .sidebar ul{list-style:none; padding:0; margin:0; flex:1;}
+  .sidebar ul li{padding:12px 10px; margin-bottom:10px; cursor:pointer; border-radius:6px; transition:0.3s;}
+  .sidebar ul li:hover{background:#222; color:#4a4aff;}
+  .sidebar-toggle{position:absolute; bottom:20px; left:50%; transform:translateX(-50%); cursor:pointer; font-size:20px; color:#4a4aff;}
+
+  /* Main content */
+  .main-content{margin-left:240px; padding:30px; width:calc(100% - 240px); transition: margin-left 0.3s, width 0.3s;}
+  .sidebar.collapsed + .main-content{margin-left:60px; width:calc(100% - 60px);}
+  h3{color:#4a4aff; margin-bottom:20px;}
+
+  /* Drag-and-drop area */
+  .drop-area{
+    border: 2px dashed #4a4aff;
+    border-radius: 12px;
+    padding:40px;
+    text-align:center;
+    cursor:pointer;
+    transition:0.3s;
+    color:#aaa;
+    font-size:16px;
+  }
+  .drop-area.dragover{
+    background:rgba(74,74,255,0.1);
+    color:#4a4aff;
+    border-color:#6363ff;
+  }
+
+  /* File previews */
+  .upload-preview{display:flex; flex-wrap:wrap; gap:15px; margin-top:20px;}
+  .upload-preview img{width:120px; height:120px; object-fit:cover; border-radius:8px; border:1px solid #333; transition:0.3s;}
+  .upload-preview img:hover{transform:scale(1.05); box-shadow:0 8px 20px rgba(0,0,0,0.5);}
+  .upload-preview .file-preview{width:120px; height:120px; display:flex; justify-content:center; align-items:center; border:1px solid #333; border-radius:8px; background:#222; color:#aaa; text-align:center; font-size:12px;}
+
+  /* Buttons */
+  button{margin-top:15px; padding:12px; border:none; border-radius:8px; background:#4a4aff; color:#fff; cursor:pointer; transition:0.3s;}
+  button:hover{transform:scale(1.03); box-shadow:0 8px 20px rgba(0,0,0,0.4);}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <h2>AI Hub</h2>
+  <ul>
+    <li onclick="navigate('dashboard')">Home</li>
+    <li onclick="navigate('images')">Images / Files</li>
+    <li onclick="navigate('credits')">API Credits</li>
+    <li onclick="navigate('settings')">Settings</li>
+  </ul>
+  <div class="sidebar-toggle" onclick="toggleSidebar()">&#9776;</div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+  <h3>Upload Files / Images</h3>
+
+  <!-- Drag-and-drop area -->
+  <div class="drop-area" id="dropArea">
+    Drag & Drop files here or click to select
+    <input type="file" id="fileInput" multiple style="display:none;">
+  </div>
+
+  <!-- File previews -->
+  <div class="upload-preview" id="uploadPreview"></div>
+
+  <!-- Optional future: AI image generation -->
+  <h3 style="margin-top:30px;">AI Image Generation (Coming Soon)</h3>
+  <p>This section can later integrate AI image generation using user API keys.</p>
+</div>
+
+<script>
+// Sidebar toggle
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed');}
+function navigate(page){window.location.href = page+'.html';}
+
+// Drag-and-drop and file input
+const dropArea = document.getElementById('dropArea');
+const fileInput = document.getElementById('fileInput');
+const previewContainer = document.getElementById('uploadPreview');
+
+// Click area triggers file input
+dropArea.addEventListener('click',()=>fileInput.click());
+
+// Drag over
+dropArea.addEventListener('dragover', (e)=>{
+  e.preventDefault();
+  dropArea.classList.add('dragover');
+});
+
+// Drag leave
+dropArea.addEventListener('dragleave', ()=>dropArea.classList.remove('dragover'));
+
+// Drop
+dropArea.addEventListener('drop', (e)=>{
+  e.preventDefault();
+  dropArea.classList.remove('dragover');
+  const files = e.dataTransfer.files;
+  handleFiles(files);
+});
+
+// File input change
+fileInput.addEventListener('change', ()=>handleFiles(fileInput.files));
+
+// Handle files
+function handleFiles(files){
+  Array.from(files).forEach(file=>{
+    if(file.type.startsWith('image/')){
+      const reader = new FileReader();
+      reader.onload = e=>{
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        previewContainer.appendChild(img);
+      }
+      reader.readAsDataURL(file);
+    } else {
+      const div = document.createElement('div');
+      div.classList.add('file-preview');
+      div.textContent = file.name + '\n(' + formatSize(file.size) + ')';
+      previewContainer.appendChild(div);
+    }
+  });
+}
+
+// Format file size
+function formatSize(size){
+  if(size < 1024) return size + ' B';
+  else if(size < 1024*1024) return (size/1024).toFixed(1) + ' KB';
+  else return (size/1024/1024).toFixed(1) + ' MB';
+}
+</script>
+
+</body>
+</html>
