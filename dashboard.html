@@ -6,82 +6,40 @@
 <title>AI Hub Dashboard</title>
 <link rel="stylesheet" href="assets/style.css">
 <style>
-  /* General layout */
-  body {margin:0; font-family:'Roboto',sans-serif; display:flex; background:#0a0a0a; color:#eee;}
+  body{margin:0;font-family:'Roboto',sans-serif;display:flex;background:#0a0a0a;color:#eee;}
   
   /* Sidebar */
-  .sidebar {
-    width:240px;
-    background:#111;
-    height:100vh;
-    position:fixed;
-    left:0;
-    top:0;
-    padding:20px;
-    box-shadow: 2px 0 20px rgba(0,0,0,0.7);
-    display:flex;
-    flex-direction:column;
-    transition: width 0.3s;
-  }
-  .sidebar.collapsed {width:60px;}
-  .sidebar h2 {color:#4a4aff; text-align:center; font-size:22px; margin-bottom:30px;}
-  .sidebar ul {list-style:none; padding:0; margin:0; flex:1;}
-  .sidebar ul li {padding:12px 10px; margin-bottom:10px; cursor:pointer; border-radius:6px; transition:0.3s;}
-  .sidebar ul li:hover {background:#222; color:#4a4aff;}
-  .sidebar-toggle {position:absolute; bottom:20px; left:50%; transform:translateX(-50%); cursor:pointer; font-size:20px; color:#4a4aff;}
+  .sidebar{width:240px;background:#111;height:100vh;position:fixed;left:0;top:0;padding:20px;box-shadow:2px 0 20px rgba(0,0,0,0.7);display:flex;flex-direction:column;transition:width 0.3s;}
+  .sidebar.collapsed{width:60px;}
+  .sidebar h2{color:#4a4aff;text-align:center;margin-bottom:30px;}
+  .sidebar ul{list-style:none;padding:0;margin:0;flex:1;}
+  .sidebar ul li{padding:12px 10px;margin-bottom:10px;cursor:pointer;border-radius:6px;transition:0.3s;}
+  .sidebar ul li:hover{background:#222;color:#4a4aff;}
+  .sidebar-toggle{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);cursor:pointer;font-size:20px;color:#4a4aff;}
 
   /* Main content */
-  .main-content {
-    margin-left:240px;
-    padding:30px;
-    width:calc(100% - 240px);
-    transition: margin-left 0.3s, width 0.3s;
-  }
-  .sidebar.collapsed + .main-content {
-    margin-left:60px;
-    width:calc(100% - 60px);
-  }
+  .main-content{margin-left:240px;padding:30px;width:calc(100% - 240px);transition:margin-left 0.3s,width 0.3s;}
+  .sidebar.collapsed + .main-content{margin-left:60px;width:calc(100% - 60px);}
+  h3{color:#4a4aff;}
 
   /* Chat container */
-  .chat-container {background:#1b1b1b; border-radius:12px; padding:25px; box-shadow:0 10px 30px rgba(0,0,0,0.6);}
-  .chat-container h3 {margin-top:0; color:#4a4aff;}
-  select,input,textarea,button {margin-top:10px;}
-  textarea {resize:none; background:#111; color:#eee; border:none; border-radius:8px; padding:12px;}
-  input, select {padding:12px; border-radius:8px; border:none; background:#111; color:#fff;}
-  input:focus, select:focus, textarea:focus {outline:none; box-shadow:0 0 10px #4a4aff;}
-
-  /* Chat history */
-  .chat-history {
-    margin-top:20px;
-    height:400px;
-    overflow-y:auto;
-    background:#111;
-    padding:15px;
-    border-radius:8px;
-    border:1px solid #333;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-  }
-  .chat-bubble {
-    padding:12px 16px;
-    border-radius:12px;
-    max-width:75%;
-    line-height:1.4;
-    word-wrap: break-word;
-    animation: fadeInBubble 0.5s ease forwards;
-  }
-  .user-bubble {align-self:flex-end; background:#4a4aff; color:#fff;}
-  .ai-bubble {align-self:flex-start; background:#222; color:#eee;}
-  @keyframes fadeInBubble {0%{opacity:0; transform:translateY(10px);}100%{opacity:1; transform:translateY(0);}}
+  .chat-container{background:#1b1b1b;border-radius:12px;padding:25px;box-shadow:0 10px 30px rgba(0,0,0,0.6);}
+  select,input,textarea,button{margin-top:10px;}
+  textarea{resize:none;background:#111;color:#eee;border:none;border-radius:8px;padding:12px;}
+  input,select{padding:12px;border-radius:8px;border:none;background:#111;color:#fff;}
+  input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 10px #4a4aff;background:#1a1a1a;}
+  .chat-history{margin-top:20px;height:400px;overflow-y:auto;background:#111;padding:15px;border-radius:8px;border:1px solid #333;display:flex;flex-direction:column;gap:10px;}
+  .chat-bubble{padding:12px 16px;border-radius:12px;max-width:75%;line-height:1.4;word-wrap:break-word;animation:fadeInBubble 0.5s ease forwards;}
+  .user-bubble{align-self:flex-end;background:#4a4aff;color:#fff;}
+  .ai-bubble{align-self:flex-start;background:#222;color:#eee;}
+  @keyframes fadeInBubble{0%{opacity:0;transform:translateY(10px);}100%{opacity:1;transform:translateY(0);}}
 
   /* Upload preview */
-  .upload-preview {display:flex; gap:10px; flex-wrap:wrap; margin-top:15px;}
-  .upload-preview img {width:100px; height:100px; object-fit:cover; border-radius:6px; border:1px solid #333;}
-  .upload-preview .file-preview {width:100px; height:100px; display:flex; justify-content:center; align-items:center; border:1px solid #333; border-radius:6px; background:#222; color:#aaa; text-align:center; font-size:12px;}
-
-  button {cursor:pointer; transition:0.3s;}
-  button:hover {transform:scale(1.02); box-shadow:0 8px 20px rgba(0,0,0,0.4);}
+  .upload-preview{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px;}
+  .upload-preview img{width:100px;height:100px;object-fit:cover;border-radius:6px;border:1px solid #333;}
+  .upload-preview .file-preview{width:100px;height:100px;display:flex;justify-content:center;align-items:center;border:1px solid #333;border-radius:6px;background:#222;color:#aaa;text-align:center;font-size:12px;}
+  button{cursor:pointer;transition:0.3s;}
+  button:hover{transform:scale(1.02);box-shadow:0 8px 20px rgba(0,0,0,0.4);}
 </style>
 </head>
 <body>
@@ -98,7 +56,6 @@
   <div class="sidebar-toggle" onclick="toggleSidebar()">&#9776;</div>
 </div>
 
-<!-- Main Content -->
 <div class="main-content">
   <div class="chat-container">
     <h3>AI Chat</h3>
@@ -127,11 +84,7 @@
 
 <script>
 // Sidebar toggle
-function toggleSidebar(){
-  document.getElementById('sidebar').classList.toggle('collapsed');
-}
-
-// Navigation
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed');}
 function navigate(page){window.location.href = page+'.html';}
 
 // Load API keys from settings
@@ -163,11 +116,11 @@ function renderHistory(){
 }
 renderHistory();
 
-// Send AI message (mock; replace with real API calls later)
+// Send AI message (real API calls)
 async function sendAI(){
   const provider = document.getElementById('aiSelect').value;
-  const key = document.getElementById('apiKey').value;
-  const prompt = document.getElementById('prompt').value;
+  const key = document.getElementById('apiKey').value.trim();
+  const prompt = document.getElementById('prompt').value.trim();
   if(!provider || !key || !prompt) return alert("Fill all fields!");
 
   // Add user message
@@ -175,19 +128,55 @@ async function sendAI(){
   renderHistory();
   document.getElementById('prompt').value = '';
 
-  // Simulate AI typing
+  // Add typing indicator
   chatHistory.push({role:'AI', content:'Typing...'});
   renderHistory();
 
-  setTimeout(()=>{
-    // Remove typing
+  try{
+    let aiResponse = '';
+    if(provider==='openai'){
+      const resp = await fetch('https://api.openai.com/v1/chat/completions',{
+        method:'POST',
+        headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:"gpt-3.5-turbo",
+          messages:[{role:"user", content:prompt}]
+        })
+      });
+      const data = await resp.json();
+      if(data.error) throw new Error(data.error.message);
+      aiResponse = data.choices[0].message.content;
+    } else if(provider==='anthropic'){
+      // Claude API
+      const resp = await fetch('https://api.anthropic.com/v1/complete',{
+        method:'POST',
+        headers:{'x-api-key':key,'Content-Type':'application/json'},
+        body:JSON.stringify({model:"claude-v1",prompt:prompt,max_tokens_to_sample:300})
+      });
+      const data = await resp.json();
+      aiResponse = data.completion;
+    } else if(provider==='google'){
+      // Google Gemini example (if REST API available)
+      const resp = await fetch('https://generativelanguage.googleapis.com/v1beta2/models/text-bison-001:generate?key='+key,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({prompt:{text:prompt},temperature:0.7,maxOutputTokens:300})
+      });
+      const data = await resp.json();
+      aiResponse = data.candidates[0].output || 'No response from Google Gemini';
+    }
+
+    // Replace typing
     chatHistory.pop();
-    // Mock AI response
-    let aiResponse = `Response from ${provider} to: "${prompt}"`;
     chatHistory.push({role:'AI', content:aiResponse});
     localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
     renderHistory();
-  }, 1500);
+
+  } catch(e){
+    chatHistory.pop();
+    chatHistory.push({role:'AI', content:'Error: '+e.message});
+    renderHistory();
+  }
 }
 
 // Preview uploaded files/images
